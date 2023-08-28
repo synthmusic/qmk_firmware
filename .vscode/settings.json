@@ -20,6 +20,7 @@
         "utility": "c",
         "ranges": "c"
     },
+    "git.detectSubmodules": false,
     "[markdown]": {
         "editor.trimAutoWhitespace": false,
         "files.trimTrailingWhitespace": false
@@ -28,7 +29,5 @@
     "[json]": {
         "editor.formatOnSave": false
     },
-    "clangd.arguments": [
-        "--header-insertion=never"
-    ]
+    "clangd.arguments": ["--header-insertion=never"]
 }
