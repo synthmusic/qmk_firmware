@@ -130,17 +130,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 } else {
                     mouseLockTaps = 0;
                 }
+                mouseLockMode = false;
                 medTimer = timer_read();
                 layer_on(_MED);
             } else {
                 if (timer_elapsed(medTimer) < holdWait) {
                     if (mouseLockTaps > 0) {
                         mouseLockMode = true;
-                    } else {
-                        mouseLockMode = !mouseLockMode;
                     }
-                } else {
-                    mouseLockMode = false;
                 }
                 layer(_MED, mouseLockMode);
             }
@@ -213,6 +210,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 cancel_deferred_exec(later_token);
                 later_token = defer_exec(1000, later_cb, NULL);
             }
+            return false;
+        case SM_MSUL:
+            duo(KC_MS_U, KC_MS_L, pressed);
+            return false;
+        case SM_MSUR:
+            duo(KC_MS_U, KC_MS_R, pressed);
+            return false;
+        case SM_MSDL:
+            duo(KC_MS_D, KC_MS_L, pressed);
+            return false;
+        case SM_MSDR:
+            duo(KC_MS_D, KC_MS_R, pressed);
             return false;
     }
     // only here to keep track of layerstate check, it wasn't useful yet

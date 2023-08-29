@@ -30,5 +30,9 @@ enum custom_keycodes {
     // SM_TH,
     SM_DF_EX,
 
-    BR_EJTB
+    BR_EJTB,
+    SM_MSUL,
+    SM_MSUR,
+    SM_MSDL,
+    SM_MSDR,
 };
