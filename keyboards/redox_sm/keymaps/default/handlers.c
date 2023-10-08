@@ -254,7 +254,7 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case KC_F10:
         case KC_F11:
         case KC_F12:
-        case LAG(KC_A):
+        case LAG(KC_A): 
         case LAG(KC_E):
         case LAG(KC_Q):
         case LAG(KC_C):
