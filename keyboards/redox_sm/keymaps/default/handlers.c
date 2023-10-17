@@ -234,14 +234,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
 // this allows for custom ctrl keys to also be auto shifted.
 bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
-        case C(KC_Z):
-        case C(KC_T):
+        case C(KC_A):
+        case C(KC_C):
         case C(KC_F):
         case C(KC_S):
+        case C(KC_T):
         case C(KC_V):
-        case C(KC_C):
         case C(KC_X):
-        case C(KC_A):
+        case C(KC_Z):
         case KC_F1:
         case KC_F2:
         case KC_F3:
@@ -255,9 +255,10 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case KC_F11:
         case KC_F12:
         case LAG(KC_A): 
-        case LAG(KC_E):
-        case LAG(KC_Q):
         case LAG(KC_C):
+        case LAG(KC_E):
+        case LAG(KC_H):
+        case LAG(KC_Q):
         case LAG(KC_V):
             return true;
         default:
