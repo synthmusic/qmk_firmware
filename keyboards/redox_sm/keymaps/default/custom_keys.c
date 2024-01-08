@@ -1,5 +1,5 @@
 
-
+// todo: what is this doing?
 #define TH(x) LT(0, x)
 #define _L_KEY_ KC_TRNS
 #define DEL_SPC LT(_DEL, KC_SPC)
