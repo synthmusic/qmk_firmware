@@ -23,6 +23,7 @@ const uint16_t PROGMEM hj_combo[]       = {KC_H, KC_J, COMBO_END};
 const uint16_t PROGMEM jk_combo[]       = {KC_J, KC_K, COMBO_END};
 const uint16_t PROGMEM kl_combo[]       = {KC_K, KC_L, COMBO_END};
 const uint16_t PROGMEM jl_combo[]       = {KC_J, KC_L, COMBO_END};
+const uint16_t PROGMEM nm_combo[]       = {KC_N, KC_M, COMBO_END};
 const uint16_t PROGMEM mcomma_combo[]   = {KC_M, KC_COMMA, COMBO_END};
 const uint16_t PROGMEM commadot_combo[] = {KC_COMMA, KC_DOT, COMBO_END};
 const uint16_t PROGMEM mdot_combo[]     = {KC_M, KC_DOT, COMBO_END};
@@ -37,6 +38,7 @@ const uint16_t PROGMEM wq_combo[]       = {KC_W, KC_Q, COMBO_END};
 const uint16_t PROGMEM ew_combo[]       = {KC_E, KC_W, COMBO_END};
 const uint16_t PROGMEM gf_combo[]       = {KC_G, KC_F, COMBO_END};
 const uint16_t PROGMEM fd_combo[]       = {KC_F, KC_D, COMBO_END};
+const uint16_t PROGMEM ds_combo[]       = {KC_D, KC_S, COMBO_END};
 const uint16_t PROGMEM cx_combo[]       = {KC_C, KC_X, COMBO_END};
 const uint16_t PROGMEM fs_combo[]       = {KC_F, KC_S, COMBO_END};
 const uint16_t PROGMEM vc_combo[]       = {KC_V, KC_C, COMBO_END};
@@ -61,6 +63,7 @@ enum combo_events {
     JK,
     KL,
     JL,
+    NM,
     MCOMMA,
     COMMADOT,
     MDOT,
@@ -71,6 +74,7 @@ enum combo_events {
     EW,
     GF,
     FD,
+    DS,
     CX,
     FS,
     VC,
@@ -100,6 +104,7 @@ combo_t key_combos[] = {
     [JK]       = COMBO(jk_combo, KC_EQL),
     [KL]       = COMBO(kl_combo, KC_SCLN),
     [JL]       = COMBO(jl_combo, KC_QUOT),
+    [NM]       = COMBO(nm_combo, KC_DEL),
     [MCOMMA]   = COMBO(mcomma_combo, C(KC_Z)),
     [COMMADOT] = COMBO(commadot_combo, KC_SLSH),
     [MDOT]     = COMBO(mdot_combo, C(KC_SLSH)),
@@ -110,6 +115,7 @@ combo_t key_combos[] = {
     [EW]       = COMBO(ew_combo, KC_ESC),
     [GF]       = COMBO(gf_combo, PT_RUN),
     [FD]       = COMBO(fd_combo, PT_RUN),
+    [DS]       = COMBO(ds_combo, KC_GRV),
     [CX]       = COMBO(cx_combo, KC_Z),
     [FS]       = COMBO(fs_combo, C(KC_S)),
     [VC]       = COMBO(vc_combo, C(KC_Z)),
