@@ -1,2 +1,0 @@
-qmk compile -kb redox_sm -km default
-qmk flash -kb recox-sm -km default
