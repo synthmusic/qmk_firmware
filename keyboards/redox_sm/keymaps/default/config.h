@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#define COMBO_TERM 29
+#define COMBO_TERM 20
 
 #define AUTO_SHIFT_MODIFIERS
 #define AUTO_SHIFT_TIMEOUT 150
