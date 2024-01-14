@@ -59,6 +59,17 @@ Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/ne
 
 here are the qmk bash commands to run in the qmk msys cmd
 
-qmk compile -kb redox_sm -km default
+these are for the default right keyboard redox_sm = redox_sm/right
 
-qmk flash -kb recox-sm -km default
+qmk compile -kb redox_sm -km default
+qmk flash -kb redox_sm -km default
+
+rightside uses triple key combo to enable flash:
+POK
+
+the left side should only need updates for hardware changes but it will be
+
+-   don't forget you'll need to plug usb directly into the left side and use the reset wires
+
+qmk compile -kb redox_sm/left -km default
+qmk flash -kb redox_sm/left -km default
