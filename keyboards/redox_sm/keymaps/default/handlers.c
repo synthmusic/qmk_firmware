@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdbool.h>
+// #include "print.h"
 
 #define wait SS_DELAY(20) // 20ms delay
 
@@ -108,10 +109,23 @@ uint32_t              later_cb(uint32_t time, void* param) {
 }
 
 uint16_t entTimer = 0, tabTimer = 0, bspcTimer = 0, medTimer = 0;
+uint16_t lastKeyPressTime = 0;
 
-
-//
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    #ifdef CONSOLE_ENABLE
+        // uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+        uint16_t elapsed = record->event.time - lastKeyPressTime;
+        lastKeyPressTime = record->event.time;
+        uprintf("  %s, %s%2u %s, 0x%04X, PRO REC time: %5u, elap: %5u\n", 
+            record->event.pressed ? "Pr  " : "  Re",
+            record->tap.count ? "T" : " ",
+            record->tap.count,
+            record->tap.interrupted ? "I" : " ",
+            keycode,
+            record->event.time,
+            elapsed);
+    #endif 
+
     const bool pressed = record->event.pressed;
     switch (keycode) {
         case RHO:
@@ -140,6 +154,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                     }
                 }
                 layer(_MED, mouseLockMode);
+                uprintf("\n");
+
             }
             return false;
         case PHI:
@@ -263,7 +279,7 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
             return true;
         default:
             return false;
-    }
+    }// todo: define a case for z where the second tap is auto shifted?
 }
 
 uint16_t get_autoshift_timeout(uint16_t k, keyrecord_t* record) {
@@ -276,12 +292,63 @@ uint16_t get_autoshift_timeout(uint16_t k, keyrecord_t* record) {
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
+    uint16_t retTapTerm = TAPPING_TERM;
+    uint16_t elapsed = timer_read() - record->event.time;
+
     switch (keycode) {
-        // case TH(SM_TH):
-        //     return 3000;
+        // how long to allow space to be held before it becomes a modifier.
         case (LT(_DEL, KC_SPC)):
-            return 140;
+            if (record->tap.count > 0) {
+                retTapTerm = 0;
+            } else {
+                retTapTerm = 180;
+            }
+            break;
+        case (LSFT_T(KC_Z)):
+            if (record->tap.count > 0) {
+                retTapTerm = 0;
+            }
+            break;
         default:
-            return TAPPING_TERM;
+            break;
     }
+    #ifdef CONSOLE_ENABLE
+        // if (elapsed < 16 || (elapsed + 5) >= retTapTerm) {
+        if (1) {
+        uprintf("    TAP_TERM: kc: 0x%04X, time: %5u, state: %u, intter: %u, taps: %u, elapsed: %4u, term: %4u\n", 
+            keycode,
+            record->event.time,
+            record->event.pressed,
+            record->tap.interrupted,
+            record->tap.count,
+            elapsed,
+            retTapTerm);
+        }
+    #endif
+
+    return retTapTerm;
+}
+
+bool get_permissive_hold(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case (LT(_DEL, KC_ENT)):
+        case (LT(_DEL, KC_SPC)):
+            return true;
+        default:
+            return false;
+    }
+}
+
+// bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t* record) {
+//     switch (keycode) {
+//         default:
+//             return false;
+//     }
+// }
+
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_enable=true;
+  debug_keyboard=true;
+  //debug_mouse=true;
 }

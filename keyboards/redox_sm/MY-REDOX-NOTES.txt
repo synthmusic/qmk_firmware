@@ -11,6 +11,10 @@ here is the order of operations for qmk
 https://docs.qmk.fm/#/understanding_qmk?id=process-record
 
 
+## fun facts:  
+- tapping term is not tracked on a per key basis: if an alternate key w/ a term is pressed, it takes over the timer
+
+
 the readme in this folder
 
 
@@ -32,4 +36,3 @@ qmk flash -kb redox_sm -km default
 ```
 
 any updates to the map can simply be reflashed to the right side, and there is a command combo (pok) to kick it into flash mode.
-
