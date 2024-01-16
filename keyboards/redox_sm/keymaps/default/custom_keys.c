@@ -6,6 +6,7 @@
 // #define DEL_ENT LT(_DEL, KC_ENT)
 #define FUN_TAB LT(_FUN, KC_TAB)
 #define FUN_BSP LT(_FUN, KC_BSPC)
+#define LSFT_Z LSFT_T(KC_Z)
 
 // BR = browser
 // SM = synthmusic
