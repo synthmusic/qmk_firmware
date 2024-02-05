@@ -3,7 +3,7 @@
 #define TH(x) LT(0, x)
 #define _L_KEY_ KC_TRNS
 #define DEL_SPC LT(_DEL, KC_SPC)
-// #define DEL_ENT LT(_DEL, KC_ENT)
+#define DEL_ENT LT(_DEL, KC_ENT)
 #define FUN_TAB LT(_FUN, KC_TAB)
 #define FUN_BSP LT(_FUN, KC_BSPC)
 #define LSFT_Z LSFT_T(KC_Z)
@@ -13,10 +13,10 @@
 
 enum custom_keycodes {
     ALP = SAFE_RANGE,
-    DEL,
+    // DEL,
     RHO,
     PHI,
-    FUN,
+    // FUN,
     MED,
 
     MIN_WIN,
@@ -25,7 +25,7 @@ enum custom_keycodes {
     PT_RUN,
     SM_CAPS,
 
-    DEL_ENT,
+    // DEL_ENT,
     // FUN_TAB,
     // FUN_BSP,
     // SM_TH,

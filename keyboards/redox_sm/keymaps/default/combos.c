@@ -42,7 +42,7 @@ const uint16_t PROGMEM ds_combo[]       = {KC_D, KC_S, COMBO_END};
 const uint16_t PROGMEM cx_combo[]       = {KC_C, KC_X, COMBO_END};
 const uint16_t PROGMEM fs_combo[]       = {KC_F, KC_S, COMBO_END};
 const uint16_t PROGMEM vc_combo[]       = {KC_V, KC_C, COMBO_END};
-const uint16_t PROGMEM funphi_combo[]   = {FUN, PHI, COMBO_END};
+// const uint16_t PROGMEM funphi_combo[]   = {FUN, PHI, COMBO_END};
 
 enum combo_events {
     QZ,
@@ -78,7 +78,7 @@ enum combo_events {
     CX,
     FS,
     VC,
-    FUNPHI,
+    // FUNPHI,
     COMBO_LENGTH
 };
 uint16_t COMBO_LEN = COMBO_LENGTH; // remove the COMBO_COUNT define and use this instead!
@@ -119,7 +119,7 @@ combo_t key_combos[] = {
     [CX]       = COMBO(cx_combo, KC_Z),
     [FS]       = COMBO(fs_combo, C(KC_S)),
     [VC]       = COMBO(vc_combo, C(KC_Z)),
-    [FUNPHI]   = COMBO(funphi_combo, KC_MPLY),
+    // [FUNPHI]   = COMBO(funphi_combo, KC_MPLY),
     // [enum]     = COMBO_ACTION(combo),
 
 };

@@ -13,6 +13,7 @@ https://docs.qmk.fm/#/understanding_qmk?id=process-record
 
 ## fun facts:  
 - tapping term is not tracked on a per key basis: if an alternate key w/ a term is pressed, it takes over the timer
+- to tell the difference between tap and hold for LT types, check record->tap.count on key down, it'll be 0 for a hold
 
 
 the readme in this folder

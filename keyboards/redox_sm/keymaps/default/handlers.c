@@ -108,34 +108,50 @@ uint32_t              later_cb(uint32_t time, void* param) {
     return 0;
 }
 
+void printInfo(uint16_t* keycode, keyrecord_t* record) {
+    uprintf("%s%04X  ", 
+        record->event.pressed ? "\\/ " : "  ^",
+        *keycode
+    );
+    if (record->tap.count) {
+        uprintf("T%1u",
+            record->tap.count
+        );
+    } else {
+        uprintf("  ");
+    }
+    uprintf("%s -",
+        record->tap.interrupted ? "I" : " "
+    );
+}
+
+
 uint16_t entTimer = 0, tabTimer = 0, bspcTimer = 0, medTimer = 0;
 uint16_t lastKeyPressTime = 0;
+bool _DEL_SPC_held = false;
+bool _DEL_ENT_held = false;
+bool _DEL_doubledown_no_clear_layer = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     #ifdef CONSOLE_ENABLE
         // uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
-        uint16_t elapsed = record->event.time - lastKeyPressTime;
-        lastKeyPressTime = record->event.time;
-        uprintf("  %s, %s%2u %s, 0x%04X, PRO REC time: %5u, elap: %5u\n", 
-            record->event.pressed ? "Pr  " : "  Re",
-            record->tap.count ? "T" : " ",
-            record->tap.count,
-            record->tap.interrupted ? "I" : " ",
-            keycode,
+        uprintf("  ");
+        printInfo(&keycode, record);
+        uprintf("    PRO t: %5u, el: %5u\n", 
             record->event.time,
-            elapsed);
+            record->event.time - lastKeyPressTime);
+        lastKeyPressTime = record->event.time;
     #endif 
 
     const bool pressed = record->event.pressed;
     switch (keycode) {
         case RHO:
-            // layer(_DEL, pressed);
             layer(_RHO, pressed);
             if (!pressed) SetAltTabMode(false);
             return false;
-        case FUN:
-            layer(_FUN, pressed);
-            return false;
+        // case FUN:
+        //     layer(_FUN, pressed);
+        //     return false;
         case MED:
             if(pressed) {
                 //double tap to lock mouse
@@ -174,10 +190,35 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 return false;
             }
             return true;
-        case DEL_ENT:
-            layer(_DEL, pressed);
-            timedTap(KC_ENT, &entTimer, pressed);
-            return false;
+
+        case LT(_DEL, KC_ENT):
+            if (pressed) {
+                if(!record->tap.count) {
+                    _DEL_ENT_held = true;
+                }
+            } else {
+                if (_DEL_ENT_held && _DEL_SPC_held) {
+                    _DEL_doubledown_no_clear_layer = true;
+                }
+                _DEL_ENT_held = false;
+            }
+            return true;
+        case LT(_DEL, KC_SPC):
+            if (pressed) {
+                if(!record->tap.count) {
+                    _DEL_SPC_held = true;
+                }
+            } else {
+                if (_DEL_ENT_held && _DEL_SPC_held) {
+                    _DEL_doubledown_no_clear_layer = true;
+                }                
+                _DEL_SPC_held = false;
+            }
+            return true;
+        // case DEL_ENT:
+        //     layer(_DEL, pressed);
+        //     timedTap(KC_ENT, &entTimer, pressed);
+        //     return false;
         // case FUN_TAB:
         //     layer(_FUN, pressed);
         //     timedTap(KC_TAB, &tabTimer, pressed);
@@ -247,6 +288,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     return true;
 }
 
+static layer_state_t lastState = 0;
+
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    uprintf("        layer_state_set_user: %02X, lastState: %02X, 2?: %u\n", 
+        state,
+        lastState,
+        IS_LAYER_ON_STATE(state, _DEL)
+    );
+    if (_DEL_doubledown_no_clear_layer && IS_LAYER_ON_STATE(lastState, _DEL)) {
+        state |= (1 << _DEL);
+        _DEL_doubledown_no_clear_layer = false;
+    }
+
+    lastState = state;
+    return state;
+}
+
 // this allows for custom ctrl keys to also be auto shifted.
 bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
@@ -282,8 +341,8 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
     }// todo: define a case for z where the second tap is auto shifted?
 }
 
-uint16_t get_autoshift_timeout(uint16_t k, keyrecord_t* record) {
-    switch (k) {
+uint16_t get_autoshift_timeout(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
         case KC_A:
             return 200;
         default:
@@ -293,10 +352,10 @@ uint16_t get_autoshift_timeout(uint16_t k, keyrecord_t* record) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
     uint16_t retTapTerm = TAPPING_TERM;
-    uint16_t elapsed = timer_read() - record->event.time;
 
     switch (keycode) {
         // how long to allow space to be held before it becomes a modifier.
+        case (LT(_DEL, KC_ENT)):
         case (LT(_DEL, KC_SPC)):
             if (record->tap.count > 0) {
                 retTapTerm = 0;
@@ -315,14 +374,13 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
     #ifdef CONSOLE_ENABLE
         // if (elapsed < 16 || (elapsed + 5) >= retTapTerm) {
         if (1) {
-        uprintf("    TAP_TERM: kc: 0x%04X, time: %5u, state: %u, intter: %u, taps: %u, elapsed: %4u, term: %4u\n", 
-            keycode,
-            record->event.time,
-            record->event.pressed,
-            record->tap.interrupted,
-            record->tap.count,
-            elapsed,
-            retTapTerm);
+            uprintf("                    ");
+            printInfo(&keycode, record);
+
+            uprintf("      TAP_TERM - %4u - el: %4u\n", 
+                retTapTerm,
+                timer_read() - record->event.time
+            );
         }
     #endif
 
@@ -345,10 +403,3 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t* record) {
 //             return false;
 //     }
 // }
-
-void keyboard_post_init_user(void) {
-  // Customise these values to desired behaviour
-  debug_enable=true;
-  debug_keyboard=true;
-  //debug_mouse=true;
-}

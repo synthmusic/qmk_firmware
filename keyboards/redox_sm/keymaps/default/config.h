@@ -34,3 +34,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define NO_ACTION_TAPPING
 // #define NO_ACTION_ONESHOT
 #define MOUSEKEY_MOVE_DELTA 2
+
+#define LAYER_STATE_8BIT
