@@ -175,6 +175,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             }
             return false;
         case PHI:
+            autoshift_enable();
+            if (capsLockMode) {
+                capsLockMode = false;
+                tap_code(KC_CAPS);
+            }
             layer(_PHI, pressed);
             if (!pressed) SetAltTabMode(false);
             return false;
@@ -312,6 +317,7 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case C(KC_A):
         case C(KC_C):
         case C(KC_F):
+        case C(KC_P):
         case C(KC_S):
         case C(KC_T):
         case C(KC_V):
