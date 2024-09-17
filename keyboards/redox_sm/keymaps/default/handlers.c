@@ -285,6 +285,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SM_MSDR:
             duo(KC_MS_D, KC_MS_R, pressed);
             return false;
+        // case KC_Q:
+        //     return false;
     }
     // only here to keep track of layerstate check, it wasn't useful yet
     // if (layer_state_is(_DEL) && pressed) {
@@ -314,6 +316,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 // this allows for custom ctrl keys to also be auto shifted.
 bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
+        case C(A(KC_I)):
         case C(KC_A):
         case C(KC_C):
         case C(KC_F):
@@ -350,6 +353,8 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
 uint16_t get_autoshift_timeout(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case KC_A:
+        // case KC_Q:
+        case KC_Z:
             return 200;
         default:
             return AUTO_SHIFT_TIMEOUT;

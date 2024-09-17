@@ -9,12 +9,13 @@
 #define combosdef \
 COMB(   CV,         C(KC_Z),        KC_C, KC_V) \
 COMB(   CX,         KC_Z,           KC_C, KC_X) \
-COMB(   BF,         S(KC_RBRC),     KC_B, KC_F) \
+COMB(   BF,         OSM(MOD_LGUI),  KC_B, KC_F) \
 COMB(   DF,         KC_EQL,         KC_D, KC_F) \
-COMB(   DS,         KC_GRV,         KC_D, KC_S) \
+COMB(   DS,         KC_ESC,         KC_D, KC_S) \
 COMB(   DV,         OSM(MOD_LGUI),  KC_D, KC_V) \
+COMB(   DWLALT,     QK_BOOT,        KC_D, KC_W, KC_LALT) \
 COMB(   DWALT_Q,    QK_BOOT,        KC_D, KC_W, LALT_Q) \
-COMB(   EW,         KC_ESC,         KC_E, KC_W) \
+COMB(   EW,         KC_Q,           KC_E, KC_W) \
 COMB(   FG,         S(KC_LBRC),     KC_F, KC_G) \
 COMB(   FS,         C(KC_S),        KC_F, KC_S) \
 COMB(   HJ,         KC_MINS,        KC_H, KC_J) \
@@ -25,6 +26,7 @@ COMB_A( IOU,        fC_S_A,         KC_I, KC_O, KC_U) \
 COMB(   IU,         KC_LBRC,        KC_I, KC_U) \
 COMB(   JK,         KC_EQL,         KC_J, KC_K) \
 COMB(   JL,         KC_QUOT,        KC_J, KC_L) \
+COMB(   JN,         OSM(MOD_LGUI),  KC_J, KC_N) \
 COMB(   KL,         KC_SCLN,        KC_K, KC_L) \
 COMB(   KM,         OSM(MOD_LGUI),  KC_K, KC_M) \
 COMB(   MCOMM,      C(KC_Z),        KC_M, KC_COMM) \
@@ -36,7 +38,7 @@ COMB(   POK,        QK_BOOT,        KC_P, KC_O, KC_K) \
 COMB(   QWD,        QK_BOOT,        KC_Q, KC_W, KC_D) \
 COMB(   QZ,         AS_TOGG,        KC_Q, KC_Z) \
 COMB(   UY,         C(A(KC_I)),     KC_U, KC_Y) \
-COMB(   WLALT_Q,    KC_Q,           KC_W, LALT_Q) \
+COMB(   WLALT,      KC_GRV,         KC_W, KC_LALT) \
 COMB(   XLSFT_Z,    KC_Z,           KC_X, LSFT_Z) \
 COMB(   COMMDOT,    KC_SLSH,        KC_COMM, KC_DOT) \
 COMB(   _48,        S(KC_9),        KC_4, KC_8) \
@@ -44,8 +46,10 @@ COMB(   _86,        S(KC_0),        KC_8, KC_6) \
 COMB(   _23,        C(KC_SLSH),     KC_2, KC_3) \
 COMB(   _45,        S(KC_9),        KC_4, KC_5) \
 COMB(   _56,        S(KC_0),        KC_5, KC_6) \
-                                            \
 
+void swallow(bool pressed) {
+    // no-op
+}
 void fC_S_A(bool pressed) {
     key(C(S(KC_A)), pressed);
 }
