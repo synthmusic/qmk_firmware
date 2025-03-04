@@ -126,7 +126,10 @@ void printInfo(uint16_t* keycode, keyrecord_t* record) {
 }
 
 
-uint16_t entTimer = 0, tabTimer = 0, bspcTimer = 0, medTimer = 0;
+uint16_t  entTimer = 0, 
+          tabTimer = 0, 
+          bspcTimer = 0, 
+          medTimer = 0;
 uint16_t lastKeyPressTime = 0;
 bool _DEL_SPC_held = false;
 bool _DEL_ENT_held = false;
@@ -338,12 +341,24 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case KC_F10:
         case KC_F11:
         case KC_F12:
+        case KC_F13:
+        case KC_F14:
+        case KC_F15:
+        case KC_F16:
+        case KC_F17:
+        case KC_F18:
+        case KC_F19:
+        case KC_F20:
+        case KC_F21:
+        case KC_F22:
+        case KC_F23:
+        case KC_F24:
         case LAG(KC_A): 
         case LAG(KC_C):
         case LAG(KC_E):
         case LAG(KC_H):
         case LAG(KC_Q):
-        case LAG(KC_V):
+        case LAG(KC_V): 
             return true;
         default:
             return false;

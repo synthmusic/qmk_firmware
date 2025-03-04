@@ -12,12 +12,12 @@ COMB(   CX,         KC_Z,           KC_C, KC_X) \
 COMB(   BF,         OSM(MOD_LGUI),  KC_B, KC_F) \
 COMB(   DF,         KC_EQL,         KC_D, KC_F) \
 COMB(   DS,         KC_ESC,         KC_D, KC_S) \
-COMB(   DV,         OSM(MOD_LGUI),  KC_D, KC_V) \
+COMB_A( DV,         swallow,        KC_D, KC_V) \
 COMB(   DWLALT,     QK_BOOT,        KC_D, KC_W, KC_LALT) \
 COMB(   DWALT_Q,    QK_BOOT,        KC_D, KC_W, LALT_Q) \
 COMB(   EW,         KC_Q,           KC_E, KC_W) \
 COMB(   FG,         S(KC_LBRC),     KC_F, KC_G) \
-COMB(   FS,         C(KC_S),        KC_F, KC_S) \
+COMB(   FS,         KC_GRV,         KC_F, KC_S) \
 COMB(   HJ,         KC_MINS,        KC_H, KC_J) \
 COMB(   IJ,         S(KC_9),        KC_I, KC_J) \
 COMB(   IL,         S(KC_0),        KC_I, KC_L) \
@@ -28,7 +28,7 @@ COMB(   JK,         KC_EQL,         KC_J, KC_K) \
 COMB(   JL,         KC_QUOT,        KC_J, KC_L) \
 COMB(   JN,         OSM(MOD_LGUI),  KC_J, KC_N) \
 COMB(   KL,         KC_SCLN,        KC_K, KC_L) \
-COMB(   KM,         OSM(MOD_LGUI),  KC_K, KC_M) \
+COMB_A( KM,         swallow,        KC_K, KC_M) \
 COMB(   MCOMM,      C(KC_Z),        KC_M, KC_COMM) \
 COMB(   MDOT,       C(KC_SLSH),     KC_M, KC_DOT) \
 COMB(   NM,         KC_DEL,         KC_N, KC_M) \
