@@ -20,8 +20,10 @@ elif [ $argument == "console" ]; then
     echo "Running console monitoring"
     qmk console
 elif [ $argument == "dev" ]; then
-    echo "NOT WORKING FOR SOME REASON -- look at the command in script.  Moving to the dev directory"
-    cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/
+    echo "Run this to jump to dev directory:"
+    # runs in script context, so user shell does not change
+    # cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/
+    echo "cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/"
 elif [ $argument == "command2" ]; then
     echo "Running command 2..."
 else
