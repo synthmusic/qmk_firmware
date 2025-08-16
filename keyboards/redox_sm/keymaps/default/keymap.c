@@ -17,16 +17,15 @@
 //these are undef'd at eof
 #define xx      KC_NO
 #define CS(x)   C(S(x))
-#define WA(x)   LAG(x)
 #define W(x)    G(x)
+#define WA(x)   LAG(x)
+#define WS(x)   G(S(x))
 #define lf      KC_LEFT
 #define rt      KC_RIGHT
 #define dn      KC_DOWN
 #define up      KC_UP
 #define tab     KC_TAB
 #define alt     KC_LALT
-#define MT_C_0  MT(MOD_LCTL, KC_0)
-#define MT_S_DT MT(MOD_LSFT, KC_DOT)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_ALP] = LAYOUT(
@@ -69,7 +68,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //┌────────┬────────┬────────┬────────┬────────┐                                         ┌────────┬────────┬────────┬────────┬────────┐
     A_TAB  , CS(tab), W(up)  , C(tab) , KC_WH_U,                                           KC_WH_U, CS(tab), C(KC_T), C(tab) , A_TAB  ,
 //├────────┼────────┼────────┼────────┼────────┼────────┐                       ┌────────┼────────┼────────┼────────┼────────┼────────┤
-    SA_TAB , W(lf)  , W(dn)  , W(rt)  , KC_WH_D, KC_BTN3,                         KC_BTN3, KC_WH_D, A(lf)  ,C(KC_F4), A(rt)  , SA_TAB ,
+    SA_TAB , W(lf)  , W(dn)  , W(rt)  , KC_WH_D,WS(KC_D),                        WS(KC_D), KC_WH_D, A(lf)  ,C(KC_F4), A(rt)  , SA_TAB ,
 //├────────┼────────┼────────┼────────┼────────┼────────┤                       ├────────┼────────┼────────┼────────┼────────┼────────┤
     _______, MIN_WIN,WA(KC_V),WA(KC_H),A(KC_F4),TO(_ALP), /* <-- _L_KEY_ --> */  TO(_ALP), _______, _______, BR_EJTB, _______, _______,
 //└────────┼────────┼────────┼────┬───┴────┬───┼────────┼────────┐     ┌────────┼────────┼───┬────┴───┬────┼────────┼────────┼────────┘
@@ -115,6 +114,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // if shift is held, send the shifted numpad chars (for macros and what not)
 #undef xx
 #undef CS
+#undef WS
 #undef WA
 #undef W
 #undef lf
@@ -123,8 +123,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #undef up
 #undef tab
 #undef alt
-#undef MT_C_0
-#undef MT_S_DT
 
 // for reference!!!!
 /*** 

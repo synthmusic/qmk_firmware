@@ -51,13 +51,13 @@ void layer(uint16_t layer, bool pressed) {
     }
 }
 
-uint16_t holdWait = 160;
+uint16_t HOLD_DEFAULT = 160;
 
 void timedTap(uint16_t keycode, uint16_t* timer, bool pressed) {
     if (pressed) {
         *timer = timer_read();
     } else {
-        if (timer_elapsed(*timer) < holdWait) {
+        if (timer_elapsed(*timer) < HOLD_DEFAULT) {
             tap_code16(keycode);
         }
     }
@@ -130,10 +130,29 @@ uint16_t  entTimer = 0,
           tabTimer = 0, 
           bspcTimer = 0, 
           medTimer = 0;
+          // anyTimer = 0;
+
 uint16_t lastKeyPressTime = 0;
+
+// uint16_t lastKeyPressed = 0;
 bool _DEL_SPC_held = false;
 bool _DEL_ENT_held = false;
 bool _DEL_doubledown_no_clear_layer = false;
+
+// void anyHeldSet(uint16_t keycode, keyrecord_t* record) {
+//     if (record->event.pressed) {
+//         lastKeyPressed = keycode;
+//         anyTimer = timer_read();
+//     }
+// }
+
+// void anyHeldCheck() {
+
+// }
+
+// void anyHeldCheck(time) {
+
+// }
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     #ifdef CONSOLE_ENABLE
@@ -147,6 +166,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     #endif 
 
     const bool pressed = record->event.pressed;
+    // const bool held = !record->tap.count;
     switch (keycode) {
         case RHO:
             layer(_RHO, pressed);
@@ -158,7 +178,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case MED:
             if(pressed) {
                 //double tap to lock mouse
-                if (timer_elapsed(medTimer) < holdWait) {
+                if (timer_elapsed(medTimer) < HOLD_DEFAULT) {
                     mouseLockTaps++;
                 } else {
                     mouseLockTaps = 0;
@@ -167,7 +187,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 medTimer = timer_read();
                 layer_on(_MED);
             } else {
-                if (timer_elapsed(medTimer) < holdWait) {
+                if (timer_elapsed(medTimer) < HOLD_DEFAULT) {
                     if (mouseLockTaps > 0) {
                         mouseLockMode = true;
                     }
@@ -293,7 +313,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     }
     // only here to keep track of layerstate check, it wasn't useful yet
     // if (layer_state_is(_DEL) && pressed) {
-    //     entTimer = holdWait + 1;
+    //     entTimer = HOLD_DEFAULT + 1;
     // }
     return true;
 }

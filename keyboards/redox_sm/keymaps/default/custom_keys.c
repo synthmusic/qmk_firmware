@@ -40,5 +40,9 @@ enum custom_keycodes {
 #define FUN_BSP LT(_FUN, KC_BSPC)
 #define LSFT_Z LSFT_T(KC_Z)
 #define LALT_Q LALT_T(KC_Q)
+
+#define MT_C_0  MT(MOD_LCTL, KC_0)
+#define MT_S_DT MT(MOD_LSFT, KC_DOT)
+
 // can not use custom keycode in MT combos!
 // #define MT_A_NO MT(MOD_LALT, KC_Q)
