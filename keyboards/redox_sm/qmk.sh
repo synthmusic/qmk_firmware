@@ -12,6 +12,9 @@ argument=$1
 if [ $argument == "compile" ]; then
     echo "Running compile"
     qmk compile -kb redox_sm -km default
+elif [ $argument == "flash" ]; then
+    echo "Running flash"
+    qmk flash -kb redox_sm -km default
 elif [ $argument == "help" ]; then
     echo "compile: Compiles only"
     echo "console: runs the console"
@@ -29,4 +32,3 @@ elif [ $argument == "command2" ]; then
 else
     echo "Invalid argument. Please provide a valid argument."
 fi
-
