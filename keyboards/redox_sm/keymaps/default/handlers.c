@@ -5,6 +5,24 @@
 
 #define wait SS_DELAY(20) // 20ms delay
 
+// char pr_buffer[128];
+// size_t pr_offset = 0;
+
+#define BUF_APPEND(fmt, ...)                \
+    uprintf(fmt __VA_OPT__(, )__VA_ARGS__)
+
+    // pr_offset += snprintf(pr_buffer + pr_offset, sizeof(pr_buffer) - pr_offset, fmt __VA_OPT__(, )__VA_ARGS__)
+
+#define BUF_UPRINT_CLEAR()                   \
+    uprintf("\n")
+
+bool tabs = true;
+
+    // uprintf("%s\n", pr_buffer);
+    // memset(pr_buffer, 0, sizeof(pr_buffer));
+    // pr_offset = 0
+
+
 // void delta_mod(uint16_t keycode, bool pressed) {
 //     if (pressed) {
 //         register_code16(AHK_DEL);
@@ -50,6 +68,28 @@ void layer(uint16_t layer, bool pressed) {
         layer_off(layer);
     }
 }
+
+uint16_t wkS(uint16_t keycode) {
+    add_weak_mods(MOD_BIT(KC_LSFT));
+    return keycode;
+}
+
+uint16_t wkC(uint16_t keycode) {
+    add_weak_mods(MOD_BIT(KC_LCTL));
+    return keycode;
+}
+
+uint16_t wkA(uint16_t keycode) {
+    add_weak_mods(MOD_BIT(KC_LALT));
+    return keycode;
+}
+
+uint16_t wkW(uint16_t keycode) {
+    add_weak_mods(MOD_BIT(KC_LGUI));
+    return keycode;
+}
+
+
 
 uint16_t HOLD_DEFAULT = 160;
 
@@ -108,33 +148,119 @@ uint32_t              later_cb(uint32_t time, void* param) {
     return 0;
 }
 
-void printInfo(uint16_t* keycode, keyrecord_t* record) {
-    uprintf("%s%04X  ", 
-        record->event.pressed ? "\\/ " : "  ^",
-        *keycode
-    );
-    if (record->tap.count) {
-        uprintf("T%1u",
-            record->tap.count
+void bufferInfo(uint16_t* keycode, keyrecord_t* record, const char* funcString) {
+    if (tabs) {
+        BUF_APPEND("%04X  ", *keycode);
+        BUF_APPEND("%s  ", funcString);
+        BUF_APPEND("%s  ",
+            record->event.pressed ? "\\/" : "^"
         );
+        // BUF_APPEND("Taps ");
+        if (record->tap.count) {
+            BUF_APPEND("%u  ", record->tap.count);
+        } else {
+            BUF_APPEND("-  ");
+        }
+        BUF_APPEND("%s  ",
+            record->tap.interrupted ? "Int" : ""
+        );
+
     } else {
-        uprintf("  ");
+        BUF_APPEND("  %04X ", *keycode);
+        BUF_APPEND(" %s ", funcString);
+        BUF_APPEND("%s ",
+            record->event.pressed ? "\\/ " : "  ^"
+        );
+        BUF_APPEND("Taps ");
+        if (record->tap.count) {
+            BUF_APPEND("%1u", record->tap.count);
+        } else {
+            BUF_APPEND("-");
+        }
+        BUF_APPEND(" %s  ",
+            record->tap.interrupted ? "Int" : "   "
+        );
+
     }
-    uprintf("%s -",
-        record->tap.interrupted ? "I" : " "
-    );
 }
 
-
-uint16_t  entTimer = 0, 
-          tabTimer = 0, 
-          bspcTimer = 0, 
+uint16_t  entTimer = 0,
+          tabTimer = 0,
+          bspcTimer = 0,
           medTimer = 0;
-          // anyTimer = 0;
 
-uint16_t lastKeyPressTime = 0;
 
-// uint16_t lastKeyPressed = 0;
+uint16_t lastKeyPressed = 0;
+uint16_t lastEventTime = 0;
+uint16_t eventElapStartTime = 0;
+uint16_t funcElapStartTime = 0;
+bool resetEventElaps = true;
+bool resetFuncElaps = true;
+
+void bufferEventTime(uint16_t* keycode, keyrecord_t* record) {
+    if (tabs) {
+        if (resetEventElaps) {
+            BUF_APPEND("-----  -----  ");
+            eventElapStartTime = record->event.time;
+        } else if (record->event.time == 0) {
+            BUF_APPEND("--  --  ");
+        } else {
+            BUF_APPEND("%u  ",
+                TIMER_DIFF_16(record->event.time, eventElapStartTime)
+            );
+            BUF_APPEND("%d  ",
+                TIMER_DIFF_16(record->event.time, lastEventTime)
+            );
+        }
+    } else {
+        if (resetEventElaps) {
+            BUF_APPEND("   event: -----, ----- ");
+            eventElapStartTime = record->event.time;
+        } else if (record->event.time == 0) {
+            BUF_APPEND("   event:    --,    -- ");
+        } else {
+            BUF_APPEND("   event: %5u",
+                TIMER_DIFF_16(record->event.time, eventElapStartTime)
+            );
+            BUF_APPEND(", %5d ",
+                TIMER_DIFF_16(record->event.time, lastEventTime)
+            );
+        }
+
+    }
+    if (record->event.time) {
+        lastEventTime = record->event.time;
+    }
+    resetEventElaps = false;
+}
+
+uint16_t lastFuncTimer = 0;
+void bufferFuncTime(void) {
+    if (tabs) {
+        if (resetFuncElaps) {
+            BUF_APPEND("-----  -----  ");
+            funcElapStartTime = timer_read();
+        } else {
+            BUF_APPEND("%u  %u  ",
+                timer_elapsed(funcElapStartTime),
+                timer_elapsed(lastFuncTimer)
+            );
+        }
+    } else {
+        if (resetFuncElaps) {
+            BUF_APPEND("   func: -----, ----- ");
+            funcElapStartTime = timer_read();
+        } else {
+            BUF_APPEND("   func: %5u, %5u ",
+                timer_elapsed(funcElapStartTime),
+                timer_elapsed(lastFuncTimer)
+            );
+        }
+    }
+    lastFuncTimer = timer_read();
+    resetFuncElaps = false;
+}
+
 bool _DEL_SPC_held = false;
 bool _DEL_ENT_held = false;
 bool _DEL_doubledown_no_clear_layer = false;
@@ -142,7 +268,7 @@ bool _DEL_doubledown_no_clear_layer = false;
 // void anyHeldSet(uint16_t keycode, keyrecord_t* record) {
 //     if (record->event.pressed) {
 //         lastKeyPressed = keycode;
-//         anyTimer = timer_read();
+//         lastFuncTimer = timer_read();
 //     }
 // }
 
@@ -153,17 +279,51 @@ bool _DEL_doubledown_no_clear_layer = false;
 // void anyHeldCheck(time) {
 
 // }
+bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == 0x7e52 || keycode == 0x5226) {
+        BUF_APPEND("\n");
+        BUF_UPRINT_CLEAR();
+        resetEventElaps = true;
+        resetFuncElaps = true;
+        return keycode != 0x7e52;
+    }
+
+    #ifdef CONSOLE_ENABLE
+    if (tabs) {
+        bufferInfo(&keycode, record, "P");
+        BUF_APPEND("    ");
+    } else {
+        bufferInfo(&keycode, record, "P  ");
+        BUF_APPEND("           ");
+    }
+
+        bufferEventTime(&keycode, record);
+        bufferFuncTime();
+        BUF_UPRINT_CLEAR();
+    #endif
+    return true;
+}
+
 
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+    if (keycode == 0x5226) {
+        return true;
+    }
+
     #ifdef CONSOLE_ENABLE
         // uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
-        uprintf("  ");
-        printInfo(&keycode, record);
-        uprintf("    PRO t: %5u, el: %5u\n", 
-            record->event.time,
-            record->event.time - lastKeyPressTime);
-        lastKeyPressTime = record->event.time;
-    #endif 
+        if (tabs) {
+            bufferInfo(&keycode, record, "R");
+            BUF_APPEND("    ");
+        } else {
+            bufferInfo(&keycode, record, " R ");
+            BUF_APPEND("           ");
+        }
+
+        bufferEventTime(&keycode, record);
+        bufferFuncTime();
+        BUF_UPRINT_CLEAR();
+    #endif
 
     const bool pressed = record->event.pressed;
     // const bool held = !record->tap.count;
@@ -239,7 +399,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
             } else {
                 if (_DEL_ENT_held && _DEL_SPC_held) {
                     _DEL_doubledown_no_clear_layer = true;
-                }                
+                }
                 _DEL_SPC_held = false;
             }
             return true;
@@ -281,15 +441,26 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
                 SEND_STRING(SS_LCTL("l") wait SS_TAP(X_F6) wait SS_LSFT(SS_TAP(X_F10)) wait "m" SS_TAP(X_ENTER));
             }
             return false;
-        // case TH(SM_TH):
-        //     if (record->tap.count > 1) {
-        //         pressed ? tap_code16(KC_5) : tap_code16(KC_6);
-        //     } else if (record->tap.count > 0) {
-        //         pressed ? tap_code16(KC_1) : tap_code16(KC_2);
-        //     } else {
-        //         pressed ? tap_code16(KC_3) : tap_code16(KC_4);
-        //     }
-        //     return false;
+        case EX_TH_1:
+        case EX_TH_2:
+            if (record->tap.count > 1) {
+                pressed ? tap_code16(KC_5) : tap_code16(KC_6);
+            } else if (record->tap.count > 0) {
+                pressed ? tap_code16(KC_1) : tap_code16(KC_2);
+            } else {
+                pressed ? tap_code16(KC_3) : tap_code16(KC_4);
+            }
+            return false;
+        case EX_TH_1S:
+        case EX_TH_2S:
+            if (record->tap.count > 1) {
+                pressed ? tap_code16(S(KC_5)) : tap_code16(S(KC_6));
+            } else if (record->tap.count > 0) {
+                pressed ? tap_code16(S(KC_1)) : tap_code16(S(KC_2));
+            } else {
+                pressed ? tap_code16(S(KC_3)) : tap_code16(S(KC_4));
+            }
+            return false;
         case SM_DF_EX: // here to allow compilation of referenced function
             if (pressed) {
                 cancel_deferred_exec(later_token);
@@ -308,6 +479,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
         case SM_MSDR:
             duo(KC_MS_D, KC_MS_R, pressed);
             return false;
+        case TH_H_OTH:
+        case TH_H_RET:
+        case TH_H_STD:
+        case TH_H_PRM:
+        case TH_INT:
+            return false;
         // case KC_Q:
         //     return false;
     }
@@ -322,11 +499,17 @@ static layer_state_t lastState = 0;
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    uprintf("        layer_state_set_user: %02X, lastState: %02X, 2?: %u\n", 
-        state,
-        lastState,
-        IS_LAYER_ON_STATE(state, _DEL)
-    );
+    #ifdef CONSOLE_ENABLE
+        if (!IS_LAYER_ON_STATE(state, _NUM) &&
+            !IS_LAYER_ON_STATE(state, _FUN) &&
+            state != 0x40 && lastState != 0x40) {
+            uprintf("        layer_state_set_user: %02X, lastState: %02X, 2?: %u\n",
+                state,
+                lastState,
+                IS_LAYER_ON_STATE(state, _DEL)
+            );
+        }
+    #endif
     if (_DEL_doubledown_no_clear_layer && IS_LAYER_ON_STATE(lastState, _DEL)) {
         state |= (1 << _DEL);
         _DEL_doubledown_no_clear_layer = false;
@@ -373,12 +556,16 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case KC_F22:
         case KC_F23:
         case KC_F24:
-        case LAG(KC_A): 
+        case LAG(KC_A):
         case LAG(KC_C):
         case LAG(KC_E):
         case LAG(KC_H):
         case LAG(KC_Q):
-        case LAG(KC_V): 
+        case LAG(KC_V):
+        case C(KC_TAB):
+        case C(S(KC_TAB)):
+        case EX_AS:
+        case EX_AS_S:
             return true;
         default:
             return false;
@@ -390,10 +577,95 @@ uint16_t get_autoshift_timeout(uint16_t keycode, keyrecord_t* record) {
         case KC_A:
         // case KC_Q:
         case KC_Z:
+        case C(KC_TAB):
+        case C(S(KC_TAB)):
             return 200;
+        case EX_AS:
+        case EX_AS_S:
+            return 1000;
         default:
             return AUTO_SHIFT_TIMEOUT;
     }
+}
+
+void autoshift_process(uint16_t keycode, bool shifted, keyrecord_t* record, bool pressed) {
+    bool tap = !shifted;
+    bool both_pressed = record->event.pressed && pressed;
+    bool hold = shifted && ((both_pressed) || (record->event.pressed && !pressed));
+    bool hold_repeat = shifted && ((both_pressed) || (!record->event.pressed && !pressed));
+    #ifdef CONSOLE_ENABLE
+    if (tabs) {
+        bufferInfo(&keycode, record, "A");
+        BUF_APPEND("%u  %u  ", pressed, shifted);
+    } else {
+        bufferInfo(&keycode, record, "  A");
+        BUF_APPEND("pr: %1u sh: %1u", pressed, shifted);
+    }
+        bufferEventTime(&keycode, record);
+        bufferFuncTime();
+        BUF_UPRINT_CLEAR();
+    #endif
+    switch(keycode) {
+        case EX_AS:
+            // if (tap) {
+            //     pressed ? tap_code16(KC_1) : tap_code16(KC_2);
+            // } else if (hold) {
+            //     pressed ? tap_code16(KC_3) : tap_code16(KC_4);
+            // }
+            break;
+        case EX_AS_S:
+            if (tap) {
+                // if (pressed) {
+                //     tap_code16(S(KC_1));
+                // } else {
+                //     tap_code16(S(KC_2));
+                // }
+            } else if (hold_repeat) {
+                // if (pressed) {
+                //     tap_code16(S(KC_3));
+                // } else {
+                //     tap_code16(S(KC_4));
+                // }
+            }
+            break;
+        case C(KC_TAB):
+            if (tap && pressed) {
+                tap_code16(C(KC_TAB));
+            } else if (hold && pressed) {
+                tap_code16(C(S(KC_PGDN)));
+            }
+            break;
+        case C(S(KC_TAB)):
+            if (tap && pressed) {
+                tap_code16(C(S(KC_TAB)));
+            } else if (hold && pressed) {
+                tap_code16(C(S(KC_PGUP)));
+            }
+            break;
+        default:
+            if (pressed) {
+                if (shifted) {
+                    add_weak_mods(MOD_BIT(KC_LSFT));
+                }
+                // & 0xFF gets the Tap key for Tap Holds, required when using Retro Shift
+                register_code16((IS_RETRO(keycode)) ? keycode & 0xFF : keycode);
+
+            } else {
+                // & 0xFF gets the Tap key for Tap Holds, required when using Retro Shift
+                // The IS_RETRO check isn't really necessary here, always using
+                // keycode & 0xFF would be fine.
+                unregister_code16((IS_RETRO(keycode)) ? keycode & 0xFF : keycode);
+
+            }
+    }
+}
+
+void autoshift_press_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    autoshift_process(keycode, shifted, record, true);
+}
+
+void autoshift_release_user(uint16_t keycode, bool shifted, keyrecord_t *record) {
+    autoshift_process(keycode, shifted, record, false);
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
@@ -414,19 +686,32 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t* record) {
                 retTapTerm = 0;
             }
             break;
+        case (EX_TH_1):
+        case (EX_TH_1S):
+        case (EX_TH_2):
+        case (EX_TH_2S):
+        case (TH_H_STD):
+        case (TH_H_PRM):
+        case (TH_H_OTH):
+        case (TH_H_RET):
+        case (TH_INT):
+            retTapTerm = 1000;
+            break;
         default:
             break;
     }
     #ifdef CONSOLE_ENABLE
         // if (elapsed < 16 || (elapsed + 5) >= retTapTerm) {
-        if (1) {
-            uprintf("                    ");
-            printInfo(&keycode, record);
+        if (0) {
+            // BUF_APPEND_LIT("                    ");
+            // bufferInfo(&keycode, record);
 
-            uprintf("      TAP_TERM - %4u - el: %4u\n", 
-                retTapTerm,
-                timer_read() - record->event.time
-            );
+            // BUF_APPEND("      TAP_TERM - %4u - el: %4u",
+            //     retTapTerm,
+            //     timer_read() - record->event.time
+            // );
+            // BUF_APPEND_LIT("\n");
+            // BUF_UPRINT();
         }
     #endif
 
@@ -437,15 +722,29 @@ bool get_permissive_hold(uint16_t keycode, keyrecord_t* record) {
     switch (keycode) {
         case (LT(_DEL, KC_ENT)):
         case (LT(_DEL, KC_SPC)):
+        case (EX_TH_2):
+        case (EX_TH_2S):
+        case (TH_H_PRM):
             return true;
         default:
             return false;
     }
 }
 
-// bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t* record) {
-//     switch (keycode) {
-//         default:
-//             return false;
-//     }
-// }
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case (TH_H_OTH):
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool get_retro_tapping(uint16_t keycode, keyrecord_t* record) {
+    switch (keycode) {
+        case (TH_H_RET):
+            return true;
+        default:
+            return false;
+    }
+}

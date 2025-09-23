@@ -22,6 +22,7 @@
 #define MASTER_RIGHT
 // #define EE_HANDS
 
+
 /* serial.c configuration for split keyboard */
 #define SOFT_SERIAL_PIN D2
 

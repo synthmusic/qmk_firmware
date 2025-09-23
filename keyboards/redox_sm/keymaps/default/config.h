@@ -22,12 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define AUTO_SHIFT_MODIFIERS
 #define AUTO_SHIFT_TIMEOUT 150
 #define AUTO_SHIFT_TIMEOUT_PER_KEY
+// #define RETRO_SHIFT
+// #define AUTO_SHIFT_REPEAT // here for reference as default is disabled, not pleasant to use
 
 #define TAPPING_TERM 150
 #define TAPPING_TERM_PER_KEY
 
 #define PERMISSIVE_HOLD_PER_KEY
-// #define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#define HOLD_ON_OTHER_KEY_PRESS_PER_KEY
+#define RETRO_TAPPING_PER_KEY
 
 /* disable action features */
 // #define NO_ACTION_LAYER

@@ -27,11 +27,29 @@ enum custom_keycodes {
     SM_MSUR, // mouse up right
     SM_MSDL, // mouse down left
     SM_MSDR, // mouse down right
-
+    EX_AS,
+    EX_AS_S,
+    TH_INT,
+    PRNT_LN,
 };
 
-// this allows for a custom TH keycode in custom handlers!
+// this allows for a custom Tap Hold keys in custom handlers!
+// it only works with keys (numbers) below 0xFF
+// however, it can be used with keycodes used elsewhere because the regular key still works independently
 #define TH(x) LT(0, x)
+
+#define EX_TH_1 TH(0)
+#define EX_TH_1S TH(1)
+
+// further, the LT(y, x) really just translates to a keycode of 0x4000, so just create an enum to make it easy
+enum tap_hold_keycodes {
+    EX_TH_2 = LT(0, 2), // or = 0x4002,
+    EX_TH_2S,
+    TH_H_STD,
+    TH_H_PRM,
+    TH_H_OTH,
+    TH_H_RET
+};
 
 #define _L_KEY_ KC_TRNS
 #define DEL_SPC LT(_DEL, KC_SPC)
