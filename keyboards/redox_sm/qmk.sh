@@ -1,8 +1,14 @@
 #!/bin/bash
 if [ $# -eq 0 ]; then
-  echo "Running compile and flash in sequence"
-  qmk compile -kb redox_sm -km default && qmk flash -kb redox_sm -km default
-  exit 1
+    echo "Running compile and flash in sequence"
+    $0 compile && $0 flash
+    exit 1
+fi
+
+if [ $# -eq 2 ]; then
+    echo "Running two commands in sequence: $1 and $2"
+    $0 $1 && $0 $2
+    exit 1
 fi
 
 # Access the first argument
@@ -27,8 +33,9 @@ elif [ $argument == "dev" ]; then
     # runs in script context, so user shell does not change
     # cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/
     echo "cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/"
-elif [ $argument == "command2" ]; then
-    echo "Running command 2..."
+elif [ $argument == "copy" ]; then
+    echo "Running copy command..."
+    cp src/repos/qmk_firmware/redox_sm_right_default.hex //tsclient/F/
 else
     echo "Invalid argument. Please provide a valid argument."
 fi
