@@ -52,7 +52,7 @@ COMB(   JN,         OSM(MOD_LGUI),  KC_J, KC_N) \
 COMB(   KL,         KC_SCLN,        KC_K, KC_L) \
 COMB_A( KM,         swallow,        KC_K, KC_M) \
 COMB(   KOP,        QK_BOOT,        KC_K, KC_O, KC_P) \
-COMB(   LP,         KC_QUOT,        KC_L, KC_P) \
+COMB(   LRHO,       KC_QUOT,        KC_L, RHO) \
 COMB(   MCOMM,      C(KC_Z),        KC_M, KC_COMM) \
 COMB(   MDOT,       C(KC_SLSH),     KC_M, KC_DOT) \
 COMB(   NM,         KC_DEL,         KC_N, KC_M) \
