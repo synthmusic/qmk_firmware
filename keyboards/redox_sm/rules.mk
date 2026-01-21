@@ -10,8 +10,8 @@ BOOTLOADER = caterina
 AUDIO_ENABLE = no           # Audio outputj
 BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 BOOTMAGIC_ENABLE = no       # Enable Bootmagic Lite
-COMMAND_ENABLE = no        # Commands for debug and configuration
-CONSOLE_ENABLE = yes         # Console for debug
+COMMAND_ENABLE = no         # Commands for debug and configuration
+CONSOLE_ENABLE = yes        # Console for debug
 
 NKRO_ENABLE = no            # Enable N-Key Rollover
 

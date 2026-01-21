@@ -1,15 +1,37 @@
 #pragma once
 // https://docs.qmk.fm/#/feature_combo?id=combos
 
+/******************************************************************************
+ * COMBO ORGANIZATION INSTRUCTIONS
+ *
+ * NAMING CONVENTION:
+ * - The enum name should match the input keys
+ * - Example: COMB(BV, ...) for combo using B and V keys
+ *
+ * SORTING ORDER:
+ * 1. Standard alpha/numeric keys: Sort alphabetically, both vertically and line by line
+ *    - Sort by first key, then by second key
+ *    - Example: BF comes before BV, CV comes before CX
+ *
+ * 2. Specialty keys (like LSHIFT, LALT, etc.): Place at the end of the regular alphabetical set
+ *    - Still alphabetically sorted among themselves
+ *    - Example: XLSFT_Z comes after all standard letter combos
+ *
+ * 3. Number combos: Always at the very end
+ *    - Must have _ prefix to be a valid variable name
+ *    - Example: _45, _56, _48, etc.
+ ******************************************************************************/
+
 // COMB = COMBO
 // COMB_A = COMBO_ACTION - must add more to the case statement at end
 
-// sort: 
+// sort:
 //COMB( enum,   action,         input keys
 #define combosdef \
+COMB(   BF,         OSM(MOD_LGUI),  KC_B, KC_F) \
+COMB(   BV,         G(KC_H),        KC_B, KC_V) \
 COMB(   CV,         C(KC_Z),        KC_C, KC_V) \
 COMB(   CX,         KC_Z,           KC_C, KC_X) \
-COMB(   BF,         OSM(MOD_LGUI),  KC_B, KC_F) \
 COMB(   DF,         KC_EQL,         KC_D, KC_F) \
 COMB(   DS,         KC_ESC,         KC_D, KC_S) \
 COMB_A( DV,         swallow,        KC_D, KC_V) \
@@ -29,14 +51,16 @@ COMB(   JL,         KC_QUOT,        KC_J, KC_L) \
 COMB(   JN,         OSM(MOD_LGUI),  KC_J, KC_N) \
 COMB(   KL,         KC_SCLN,        KC_K, KC_L) \
 COMB_A( KM,         swallow,        KC_K, KC_M) \
+COMB(   KOP,        QK_BOOT,        KC_K, KC_O, KC_P) \
+COMB(   LP,         KC_QUOT,        KC_L, KC_P) \
 COMB(   MCOMM,      C(KC_Z),        KC_M, KC_COMM) \
 COMB(   MDOT,       C(KC_SLSH),     KC_M, KC_DOT) \
 COMB(   NM,         KC_DEL,         KC_N, KC_M) \
-COMB(   OP,         C(KC_P),        KC_O, KC_P) \
+COMB(   OLSFT,      KC_BSLS,        KC_O, KC_LSFT) \
 COMB(   OU,         KC_BSLS,        KC_O, KC_U) \
-COMB(   POK,        QK_BOOT,        KC_P, KC_O, KC_K) \
 COMB(   QWD,        QK_BOOT,        KC_Q, KC_W, KC_D) \
 COMB(   QZ,         AS_TOGG,        KC_Q, KC_Z) \
+COMB(   RT,         C(KC_P),        KC_R, KC_T) \
 COMB(   UY,         C(A(KC_I)),     KC_U, KC_Y) \
 COMB(   WLALT,      KC_GRV,         KC_W, KC_LALT) \
 COMB(   XLSFT_Z,    KC_Z,           KC_X, LSFT_Z) \
@@ -56,16 +80,16 @@ void fC_S_A(bool pressed) {
 void sendANFN(bool pressed) {
     if (pressed){
                 SEND_STRING(SS_TAP(X_END) " => {");
-    } 
+    }
 }
 
-// COMB(   FUNPHI, KC_MPLY,        FUN, PHI) 
+// COMB(   FUNPHI, KC_MPLY,        FUN, PHI)
 // COMB(   DF,     PT_RUN,         KC_D, KC_F)
 
-#define K_ENUM(name, key, ...) name, 
+#define K_ENUM(name, key, ...) name,
 #define K_DATA(name, key, ...) const uint16_t PROGMEM cmb_##name[] = {__VA_ARGS__, COMBO_END};
 #define K_COMB(name, key, ...) [name] = COMBO(cmb_##name, key),
-#define K_COMB_A(name, key, ...) [name] = COMBO_ACTION(cmb_##name), 
+#define K_COMB_A(name, key, ...) [name] = COMBO_ACTION(cmb_##name),
 #define K_PROCESS(name, fn, ...) case name: \
     fn(pressed); \
     break;
@@ -121,7 +145,7 @@ combo_t key_combos[] = {
 void process_combo_event(uint16_t combo_index, bool pressed) {
     switch (combo_index) {
         combosdef
-        // case UIO: 
+        // case UIO:
         //     key(C(S(KC_A)), pressed);
         //     break;
     }
