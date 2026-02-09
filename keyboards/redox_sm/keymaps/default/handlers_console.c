@@ -12,7 +12,7 @@
 #define BUF_UPRINT_CLEAR()                   \
     uprintf("\n")
 
-bool bufferUseTabs = true;
+bool bufferUseTabs = false;
 
 uint16_t lastEventTime = 0;
 uint16_t eventElapStartTime = 0;

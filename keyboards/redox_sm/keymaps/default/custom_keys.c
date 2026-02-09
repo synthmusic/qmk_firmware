@@ -62,5 +62,8 @@ enum tap_hold_keycodes {
 #define MT_C_0  MT(MOD_LCTL, KC_0)
 #define MT_S_DT MT(MOD_LSFT, KC_DOT)
 
+#define PHI_HOLD KC_INTERNATIONAL_1
+#define PHI_TAP  KC_INTERNATIONAL_2
+
 // can not use custom keycode in MT combos!
 // #define MT_A_NO MT(MOD_LALT, KC_Q)

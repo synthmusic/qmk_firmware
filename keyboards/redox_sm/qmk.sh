@@ -35,7 +35,7 @@ elif [ $argument == "dev" ]; then
     echo "cd src/repos/qmk/qmk_firmware/keyboards/redox_sm/"
 elif [ $argument == "copy" ]; then
     echo "Running copy command..."
-    cp src/repos/qmk_firmware/redox_sm_right_default.hex //tsclient/F/
+    cp ../../redox_sm_right_default.hex //tsclient/F/
 else
     echo "Invalid argument. Please provide a valid argument."
 fi

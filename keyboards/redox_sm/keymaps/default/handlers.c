@@ -91,6 +91,7 @@ void SetAltTabMode(bool enable) {
 bool capsLockMode = false;
 bool mouseLockMode = false;
 uint8_t mouseLockTaps    = 0;
+bool phiLang1Held = false;
 
 // int  deltaCount = 0;
 // void deltaTracker(bool pressed) {
@@ -144,6 +145,12 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
         resetEventElaps = true;
         resetFuncElaps = true;
         return keycode != 0x7e52;
+    }
+
+    // Release PHI_HOLD before any other key is pressed (except PHI itself)
+    if (phiLang1Held && keycode != PHI && record->event.pressed) {
+        unregister_code16(PHI_HOLD);
+        phiLang1Held = false;
     }
 
     #ifdef CONSOLE_ENABLE
@@ -201,7 +208,18 @@ bool process_record_user_standard(uint16_t keycode, keyrecord_t* record) {
                 tap_code(KC_CAPS);
             }
             layer(_PHI, pressed);
-            if (!pressed) SetAltTabMode(false);
+            if (pressed) {
+                // Send PHI_HOLD when PHI is pressed
+                register_code16(PHI_HOLD);
+                phiLang1Held = true;
+            } else {
+                // Release PHI_HOLD when PHI is released
+                if (phiLang1Held) {
+                    unregister_code16(PHI_HOLD);
+                    phiLang1Held = false;
+                }
+                SetAltTabMode(false);
+            }
             return false;
         case SM_CAPS:
             if (pressed) {
