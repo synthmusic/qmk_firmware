@@ -91,7 +91,9 @@ void SetAltTabMode(bool enable) {
 bool capsLockMode = false;
 bool mouseLockMode = false;
 uint8_t mouseLockTaps    = 0;
-bool phiLang1Held = false;
+bool phiHeld = false;
+uint16_t phiTapTimer = 0;
+bool phiOtherKeyPressed = true;
 
 // int  deltaCount = 0;
 // void deltaTracker(bool pressed) {
@@ -148,9 +150,10 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t* record) {
     }
 
     // Release PHI_HOLD before any other key is pressed (except PHI itself)
-    if (phiLang1Held && keycode != PHI && record->event.pressed) {
+    if (phiHeld && keycode != PHI && record->event.pressed) {
+        phiOtherKeyPressed = true;
         unregister_code16(PHI_HOLD);
-        phiLang1Held = false;
+        phiHeld = false;
     }
 
     #ifdef CONSOLE_ENABLE
@@ -209,14 +212,20 @@ bool process_record_user_standard(uint16_t keycode, keyrecord_t* record) {
             }
             layer(_PHI, pressed);
             if (pressed) {
-                // Send PHI_HOLD when PHI is pressed
+                // Start PHI tap timing and send PHI_HOLD
+                phiTapTimer = timer_read();
+                phiOtherKeyPressed = false;
                 register_code16(PHI_HOLD);
-                phiLang1Held = true;
+                phiHeld = true;
             } else {
+                // Send PHI_TAP on short tap with no other key pressed
+                if (!phiOtherKeyPressed && timer_elapsed(phiTapTimer) < HOLD_DEFAULT) {
+                    tap_code16(PHI_TAP);
+                }
                 // Release PHI_HOLD when PHI is released
-                if (phiLang1Held) {
+                if (phiHeld) {
                     unregister_code16(PHI_HOLD);
-                    phiLang1Held = false;
+                    phiHeld = false;
                 }
                 SetAltTabMode(false);
             }
@@ -274,7 +283,7 @@ bool process_record_user_standard(uint16_t keycode, keyrecord_t* record) {
         //     layer(_DEL, pressed);
         //     return false;
         case A_TAB:
-            if (pressed) SetAltTabMode(true);
+            if (pressed) SetAltTabMode(true);i
             key(KC_TAB, pressed);
             return false;
         case SA_TAB:
