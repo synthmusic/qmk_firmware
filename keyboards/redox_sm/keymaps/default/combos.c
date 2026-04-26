@@ -32,7 +32,7 @@ COMB(   BF,         OSM(MOD_LGUI),  KC_B, KC_F) \
 COMB(   BV,         G(KC_H),        KC_B, KC_V) \
 COMB(   CV,         C(KC_Z),        KC_C, KC_V) \
 COMB(   CX,         KC_Z,           KC_C, KC_X) \
-COMB(   DF,         KC_EQL,         KC_D, KC_F) \
+COMB(   DF,         KC_MINS,        KC_D, KC_F) \
 COMB(   DS,         KC_ESC,         KC_D, KC_S) \
 COMB_A( DV,         swallow,        KC_D, KC_V) \
 COMB(   DWLALT,     QK_BOOT,        KC_D, KC_W, KC_LALT) \
@@ -40,7 +40,9 @@ COMB(   DWALT_Q,    QK_BOOT,        KC_D, KC_W, LALT_Q) \
 COMB(   EW,         KC_Q,           KC_E, KC_W) \
 COMB(   FG,         S(KC_LBRC),     KC_F, KC_G) \
 COMB(   FS,         KC_GRV,         KC_F, KC_S) \
+COMB_A( GR,         fEsc_C_S_S,     KC_G, KC_R) \
 COMB(   HJ,         KC_MINS,        KC_H, KC_J) \
+COMB(   HU,         C(KC_P),        KC_H, KC_U) \
 COMB(   IJ,         S(KC_9),        KC_I, KC_J) \
 COMB(   IL,         S(KC_0),        KC_I, KC_L) \
 COMB(   IO,         KC_RBRC,        KC_I, KC_O) \
@@ -57,10 +59,8 @@ COMB(   MCOMM,      C(KC_Z),        KC_M, KC_COMM) \
 COMB(   MDOT,       C(KC_SLSH),     KC_M, KC_DOT) \
 COMB(   NM,         KC_DEL,         KC_N, KC_M) \
 COMB(   OLSFT,      KC_BSLS,        KC_O, KC_LSFT) \
-COMB(   OU,         KC_BSLS,        KC_O, KC_U) \
 COMB(   QWD,        QK_BOOT,        KC_Q, KC_W, KC_D) \
 COMB(   QZ,         AS_TOGG,        KC_Q, KC_Z) \
-COMB(   RT,         C(KC_P),        KC_R, KC_T) \
 COMB(   UY,         C(A(KC_I)),     KC_U, KC_Y) \
 COMB(   WLALT,      KC_GRV,         KC_W, KC_LALT) \
 COMB(   XLSFT_Z,    KC_Z,           KC_X, LSFT_Z) \
@@ -82,9 +82,16 @@ void sendANFN(bool pressed) {
                 SEND_STRING(SS_TAP(X_END) " => {");
     }
 }
+void fEsc_C_S_S(bool pressed) {
+    if (pressed){
+        SEND_STRING(SS_TAP(X_ESC) SS_DELAY(40) SS_DOWN(X_LCTL) SS_DOWN(X_LSFT) SS_TAP(X_S) SS_UP(X_LSFT) SS_UP(X_LCTL));
+    }
+}
 
 // COMB(   FUNPHI, KC_MPLY,        FUN, PHI)
 // COMB(   DF,     PT_RUN,         KC_D, KC_F)
+// COMB(   OU,         KC_BSLS,        KC_O, KC_U)
+
 
 #define K_ENUM(name, key, ...) name,
 #define K_DATA(name, key, ...) const uint16_t PROGMEM cmb_##name[] = {__VA_ARGS__, COMBO_END};
@@ -150,7 +157,7 @@ void process_combo_event(uint16_t combo_index, bool pressed) {
         //     break;
     }
 }
-/************** define combo actions ******************/
+/************** define c        ombo actions ******************/
 #undef COMB
 #undef COMB_A
 

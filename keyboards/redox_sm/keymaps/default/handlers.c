@@ -88,6 +88,31 @@ void SetAltTabMode(bool enable) {
     }
 }
 
+void SendAltTabStep(bool reverse) {
+    register_code16(KC_LALT);
+    altTabMode = true;
+
+    if (reverse) {
+        register_code16(KC_LSFT);
+        tap_code_delay(KC_TAB, 8);
+        unregister_code16(KC_LSFT);
+    } else {
+        tap_code_delay(KC_TAB, 8);
+    }
+}
+
+void SendDesktopSwitch(bool right) {
+    if (altTabMode) {
+        SetAltTabMode(false);
+    }
+
+    register_code16(KC_LGUI);
+    register_code16(KC_LCTL);
+    tap_code16(right ? KC_RGHT : KC_LEFT);
+    unregister_code16(KC_LCTL);
+    unregister_code16(KC_LGUI);
+}
+
 bool capsLockMode = false;
 bool mouseLockMode = false;
 uint8_t mouseLockTaps    = 0;
@@ -122,7 +147,14 @@ uint32_t              later_cb(uint32_t time, void* param) {
 uint16_t  entTimer = 0,
           tabTimer = 0,
           bspcTimer = 0,
-          medTimer = 0;
+          medTimer = 0,
+          aTabTimer = 0,
+          saTabTimer = 0;
+
+bool aTabPressed = false;
+bool saTabPressed = false;
+bool aTabHoldFired = false;
+bool saTabHoldFired = false;
 
 
 uint16_t lastKeyPressed = 0;
@@ -283,12 +315,36 @@ bool process_record_user_standard(uint16_t keycode, keyrecord_t* record) {
         //     layer(_DEL, pressed);
         //     return false;
         case A_TAB:
-            if (pressed) SetAltTabMode(true);i
-            key(KC_TAB, pressed);
+            if (pressed) {
+                aTabTimer = timer_read();
+                aTabPressed = true;
+                aTabHoldFired = false;
+            } else {
+                aTabPressed = false;
+                if (!aTabHoldFired) {
+                    if (timer_elapsed(aTabTimer) < HOLD_DEFAULT) {
+                        SendAltTabStep(false);
+                    } else {
+                        SendDesktopSwitch(true);
+                    }
+                }
+            }
             return false;
         case SA_TAB:
-            if (pressed) SetAltTabMode(true);
-            duo(KC_LSFT, KC_TAB, pressed);
+            if (pressed) {
+                saTabTimer = timer_read();
+                saTabPressed = true;
+                saTabHoldFired = false;
+            } else {
+                saTabPressed = false;
+                if (!saTabHoldFired) {
+                    if (timer_elapsed(saTabTimer) < HOLD_DEFAULT) {
+                        SendAltTabStep(true);
+                    } else {
+                        SendDesktopSwitch(false);
+                    }
+                }
+            }
             return false;
         case MIN_WIN:
             if (pressed) {
@@ -366,6 +422,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t* record) {
     //     entTimer = HOLD_DEFAULT + 1;
     // }
     return true;
+}
+
+void matrix_scan_user(void) {
+    if (aTabPressed && !aTabHoldFired && timer_elapsed(aTabTimer) >= HOLD_DEFAULT) {
+        SendDesktopSwitch(true);
+        aTabHoldFired = true;
+    }
+
+    if (saTabPressed && !saTabHoldFired && timer_elapsed(saTabTimer) >= HOLD_DEFAULT) {
+        SendDesktopSwitch(false);
+        saTabHoldFired = true;
+    }
 }
 
 

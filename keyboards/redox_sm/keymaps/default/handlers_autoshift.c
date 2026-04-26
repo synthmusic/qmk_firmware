@@ -67,6 +67,11 @@ bool get_custom_auto_shifted_key(uint16_t keycode, keyrecord_t* record) {
         case LAG(KC_V):
         case C(KC_TAB):
         case C(S(KC_TAB)):
+        case G(KC_H):
+        case G(KC_UP):
+        case G(KC_DOWN):
+        case G(KC_LEFT):
+        case G(KC_RIGHT):
         case EX_AS:
         case EX_AS_S:
             return true;
